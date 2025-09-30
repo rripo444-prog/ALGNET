@@ -1,10 +1,19 @@
 import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
+import path from "path";
+import { fileURLToPath } from "url";
 
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
+
+// إعداد المسارات
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// تقديم ملف index.html عند زيارة الصفحة الرئيسية
+app.use(express.static(__dirname));
 
 // بيانات مؤقتة
 let users = [];
@@ -36,3 +45,5 @@ app.get("/api/posts", (req, res) => {
 // تشغيل السيرفر
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`🚀 ALGNET server running on port ${PORT}`));
+
+
