@@ -1,49 +1,44 @@
-import express from "express";
-import bodyParser from "body-parser";
-import cors from "cors";
-import path from "path";
-import { fileURLToPath } from "url";
-
+const express = require("express");
 const app = express();
-app.use(cors());
-app.use(bodyParser.json());
+const path = require("path");
 
-// إعداد المسارات
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+app.use(express.json());
+app.use(express.static(path.join(__dirname)));
 
-// تقديم ملف index.html عند زيارة الصفحة الرئيسية
-app.use(express.static(__dirname));
-
-// بيانات مؤقتة
-let users = [];
+// قاعدة بيانات مؤقتة
 let posts = [];
+let users = [];
 
-// تسجيل مستخدم جديد
+// --------- API المستخدمين ---------
 app.post("/api/register", (req, res) => {
-  const { username, email, password } = req.body;
+  const { username, password } = req.body;
   if (users.find(u => u.username === username)) {
-    return res.json({ message: "⚠️ اسم المستخدم موجود بالفعل" });
+    return res.status(400).json({ message: "⚠️ هذا الاسم مستخدم بالفعل" });
   }
-  users.push({ username, email, password });
-  res.json({ message: "✅ تم التسجيل بنجاح" });
+  users.push({ username, password });
+  res.json({ message: "✅ تم إنشاء الحساب بنجاح" });
 });
 
-// إضافة منشور
+app.post("/api/login", (req, res) => {
+  const { username, password } = req.body;
+  const user = users.find(u => u.username === username && u.password === password);
+  if (!user) {
+    return res.status(400).json({ message: "❌ اسم المستخدم أو كلمة المرور غير صحيحة" });
+  }
+  res.json({ message: "✅ تسجيل الدخول ناجح", username });
+});
+
+// --------- API المنشورات ---------
 app.post("/api/post", (req, res) => {
   const { username, content } = req.body;
-  const newPost = { username, content, date: new Date().toLocaleString() };
-  posts.unshift(newPost);
-  res.json({ message: "✅ تم إضافة المنشور", post: newPost });
+  posts.unshift({ username, content, date: new Date().toLocaleString() });
+  res.json({ message: "✅ تم النشر" });
 });
 
-// جلب المنشورات
 app.get("/api/posts", (req, res) => {
   res.json(posts);
 });
 
-// تشغيل السيرفر
+// --------- تشغيل السيرفر ---------
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`🚀 ALGNET server running on port ${PORT}`));
-
-
+app.listen(PORT, () => console.log("🚀 ALGNET شغال على المنفذ " + PORT));
