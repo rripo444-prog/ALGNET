@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="ar">
+  <head>
+    <meta charset="utf-8">
+    <title>ALGNET - المنشورات</title>
+    <style>
+      body {
+        font-family: "Tajawal", Arial, sans-serif;
+        background: #f4f6f9;
+        margin: 0;
+        padding: 0;
+        direction: rtl;
+      }
+      header {
+        background: linear-gradient(135deg, #4CAF50, #2E7D32);
+        color: white;
+        padding: 15px;
+        text-align: center;
+      }
+      header h1 {
+        margin: 0;
+        font-size: 1.8em;
+      }
+      .container {
+        max-width: 600px;
+        margin: 30px auto;
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      }
+      h2 {
+        text-align: center;
+        margin-top: 0;
+        color: #333;
+      }
+      input, button {
+        width: 100%;
+        padding: 10px;
+        margin: 8px 0;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        font-size: 1em;
+      }
+      button {
+        background: #4CAF50;
+        color: white;
+        border: none;
+        font-weight: bold;
+        cursor: pointer;
+      }
+      button:hover {
+        background: #388E3C;
+      }
+      .post {
+        background: #f9f9f9;
+        padding: 15px;
+        margin: 10px 0;
+        border-radius: 10px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      }
+      .post b {
+        color: #2E7D32;
+      }
+      .date {
+        font-size: 12px;
+        color: gray;
+      }
+      .back {
+        display: block;
+        text-align: center;
+        margin: 15px auto;
+        color: #4CAF50;
+        text-decoration: none;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>📢 منشورات ALGNET</h1>
+    </header>
+
+    <div class="container">
+      <h2>أضف منشور جديد</h2>
+      <input id="username" placeholder="اسمك" />
+      <input id="postContent" placeholder="اكتب منشورك هنا..." />
+      <button id="addPost">نشر</button>
+
+      <h2>آخر المنشورات</h2>
+      <div id="posts"></div>
+
+      <a href="/" class="back">⬅ الرجوع للصفحة الرئيسية</a>
+    </div>
+
+    <script>
+      const API = "https://algnet.onrender.com"; // رابط السيرفر على Render
+
+      // نشر منشور جديد
+      document.getElementById('addPost').onclick = async () => {
+        const username = document.getElementById('username').value || "مجهول";
+        const content = document.getElementById('postContent').value;
+        if (!content) return alert("⚠️ اكتب منشورك أولاً");
+
+        await fetch(API + '/api/post', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, content })
+        });
+
+        document.getElementById('postContent').value = "";
+        loadPosts();
+      };
+
+      // جلب المنشورات
+      async function loadPosts() {
+        const res = await fetch(API + '/api/posts');
+        const data = await res.json();
+        const postsDiv = document.getElementById('posts');
+        postsDiv.innerHTML = data.map(p => `
+          <div class="post">
+            <b>${p.username}</b>: ${p.content}
+            <div class="date">${p.date}</div>
+          </div>
+        `).join("");
+      }
+
+      // تحميل المنشورات عند فتح الصفحة
+      loadPosts();
+    </script>
+  </body>
+        </html>
+        
