@@ -130,4 +130,51 @@
     </script>
   </body>
         </html>
-        
+        <!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>المنشورات</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h2>مرحباً <span id="user"></span> 👋</h2>
+  <form id="postForm">
+    <textarea id="content" placeholder="اكتب ما تريد..."></textarea>
+    <button type="submit">نشر</button>
+  </form>
+  <h3>آخر المنشورات</h3>
+  <div id="posts"></div>
+
+  <script>
+    const username = localStorage.getItem("username");
+    if (!username) {
+      window.location.href = "login.html";
+    }
+    document.getElementById("user").innerText = username;
+
+    async function loadPosts() {
+      const res = await fetch("/api/posts");
+      const data = await res.json();
+      document.getElementById("posts").innerHTML = data.map(
+        p => `<div class='post'><b>${p.username}</b>: ${p.content}</div>`
+      ).join("");
+    }
+
+    document.getElementById("postForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const content = document.getElementById("content").value;
+      await fetch("/api/posts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, content })
+      });
+      document.getElementById("content").value = "";
+      loadPosts();
+    });
+
+    loadPosts();
+  </script>
+</body>
+</html>
