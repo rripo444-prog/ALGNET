@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="ar">
+  <head>
+    <meta charset="utf-8">
+    <title>ALGNET - شبكة اجتماعية</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: linear-gradient(to right, #74ebd5, #ACB6E5);
+        margin: 0;
+        padding: 0;
+        direction: rtl;
+        text-align: right;
+      }
+      .container {
+        max-width: 600px;
+        margin: 40px auto;
+        background: white;
+        padding: 20px;
+        border-radius: 15px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      }
+      h2 {
+        text-align: center;
+        color: #333;
+      }
+      input, button {
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+      }
+      button {
+        background: #4CAF50;
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+      }
+      button:hover {
+        background: #45a049;
+      }
+      .post {
+        background: #f4f4f9;
+        padding: 15px;
+        margin: 10px 0;
+        border-radius: 10px;
+      }
+      .post b {
+        color: #333;
+      }
+      .date {
+        font-size: 12px;
+        color: gray;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>مرحبًا بك في ALGNET</h2>
+      
+      <h3>أضف منشور:</h3>
+      <input id="username" placeholder="اسمك" />
+      <input id="postContent" placeholder="اكتب منشورك هنا" />
+      <button id="addPost">نشر</button>
+
+      <h3>المنشورات:</h3>
+      <div id="posts"></div>
+    </div>
+
+    <script>
+      const API = "https://algnet.onrender.com"; // غيره بعد ما ترفع السيرفر على Render
+
+      // نشر منشور
+      document.getElementById('addPost').onclick = async () => {
+        const username = document.getElementById('username').value || "زائر";
+        const content = document.getElementById('postContent').value;
+        if (!content) return alert("⚠️ اكتب منشورك أولاً");
+        
+        await fetch(API + '/api/post', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, content })
+        });
+        document.getElementById('postContent').value = "";
+        loadPosts();
+      };
+
+      // عرض المنشورات
+      async function loadPosts() {
+        const res = await fetch(API + '/api/posts');
+        const data = await res.json();
+        const postsDiv = document.getElementById('posts');
+        postsDiv.innerHTML = data.map(p => `
+          <div class="post">
+            <b>${p.username}</b>: ${p.content}
+            <div class="date">${p.date}</div>
+          </div>
+        `).join("");
+      }
+
+      loadPosts();
+    </script>
+  </body>
+</html>
