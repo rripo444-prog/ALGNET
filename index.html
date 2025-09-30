@@ -5,101 +5,119 @@
     <title>ALGNET - شبكة اجتماعية</title>
     <style>
       body {
-        font-family: Arial, sans-serif;
-        background: linear-gradient(to right, #74ebd5, #ACB6E5);
         margin: 0;
-        padding: 0;
+        font-family: "Tajawal", Arial, sans-serif;
         direction: rtl;
-        text-align: right;
-      }
-      .container {
-        max-width: 600px;
-        margin: 40px auto;
-        background: white;
-        padding: 20px;
-        border-radius: 15px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-      }
-      h2 {
-        text-align: center;
+        background: #f9f9f9;
         color: #333;
       }
-      input, button {
-        width: 100%;
-        padding: 10px;
-        margin: 10px 0;
-        border-radius: 8px;
-        border: 1px solid #ccc;
+      header {
+        background: linear-gradient(135deg, #4CAF50, #2E7D32);
+        color: white;
+        padding: 20px;
+        text-align: center;
       }
-      button {
+      header h1 {
+        margin: 0;
+        font-size: 2.2em;
+      }
+      header p {
+        margin: 5px 0 0;
+        font-size: 1.1em;
+      }
+      .hero {
+        background: url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?fit=crop&w=1600&q=80') no-repeat center center/cover;
+        color: white;
+        padding: 80px 20px;
+        text-align: center;
+      }
+      .hero h2 {
+        font-size: 2.5em;
+        margin-bottom: 20px;
+        text-shadow: 2px 2px 6px rgba(0,0,0,0.5);
+      }
+      .hero button {
+        padding: 15px 25px;
+        margin: 10px;
+        font-size: 1.1em;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: bold;
+      }
+      .btn-primary {
         background: #4CAF50;
         color: white;
-        font-weight: bold;
-        cursor: pointer;
       }
-      button:hover {
-        background: #45a049;
+      .btn-secondary {
+        background: white;
+        color: #4CAF50;
       }
-      .post {
-        background: #f4f4f9;
+      .features {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        padding: 40px 20px;
+        text-align: center;
+      }
+      .feature {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      }
+      .feature h3 {
+        margin-top: 0;
+        color: #2E7D32;
+      }
+      footer {
+        background: #333;
+        color: white;
+        text-align: center;
         padding: 15px;
-        margin: 10px 0;
-        border-radius: 10px;
-      }
-      .post b {
-        color: #333;
-      }
-      .date {
-        font-size: 12px;
-        color: gray;
+        margin-top: 30px;
       }
     </style>
   </head>
   <body>
-    <div class="container">
-      <h2>مرحبًا بك في ALGNET</h2>
-      
-      <h3>أضف منشور:</h3>
-      <input id="username" placeholder="اسمك" />
-      <input id="postContent" placeholder="اكتب منشورك هنا" />
-      <button id="addPost">نشر</button>
+    <header>
+      <h1>ALGNET</h1>
+      <p>شبكتك الاجتماعية الجديدة 🌍</p>
+    </header>
 
-      <h3>المنشورات:</h3>
-      <div id="posts"></div>
-    </div>
+    <section class="hero">
+      <h2>شارك أفكارك وتواصل مع العالم</h2>
+      <button class="btn-primary" onclick="goToPosts()">تصفح المنشورات</button>
+      <button class="btn-secondary" onclick="goToRegister()">سجّل الآن</button>
+    </section>
+
+    <section class="features">
+      <div class="feature">
+        <h3>⚡ سريع وسهل</h3>
+        <p>واجهة بسيطة وسهلة الاستخدام تناسب الجميع.</p>
+      </div>
+      <div class="feature">
+        <h3>💬 تواصل</h3>
+        <p>شارك أفكارك وتفاعل مع منشورات الآخرين فوراً.</p>
+      </div>
+      <div class="feature">
+        <h3>🆓 مجاني</h3>
+        <p>استخدم ALGNET مجاناً بدون أي رسوم.</p>
+      </div>
+    </section>
+
+    <footer>
+      <p>© 2025 ALGNET - جميع الحقوق محفوظة</p>
+    </footer>
 
     <script>
-      const API = "https://algnet.onrender.com"; // غيره بعد ما ترفع السيرفر على Render
-
-      // نشر منشور
-      document.getElementById('addPost').onclick = async () => {
-        const username = document.getElementById('username').value || "زائر";
-        const content = document.getElementById('postContent').value;
-        if (!content) return alert("⚠️ اكتب منشورك أولاً");
-        
-        await fetch(API + '/api/post', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username, content })
-        });
-        document.getElementById('postContent').value = "";
-        loadPosts();
-      };
-
-      // عرض المنشورات
-      async function loadPosts() {
-        const res = await fetch(API + '/api/posts');
-        const data = await res.json();
-        const postsDiv = document.getElementById('posts');
-        postsDiv.innerHTML = data.map(p => `
-          <div class="post">
-            <b>${p.username}</b>: ${p.content}
-            <div class="date">${p.date}</div>
-          </div>
-        `).join("");
+      function goToPosts() {
+        window.location.href = "/posts.html";
       }
-
-      loadPosts();
+      function goToRegister() {
+        alert("ميزة التسجيل قيد التطوير 🚀");
+      }
     </script>
   </body>
 </html>
+
